@@ -12,6 +12,7 @@
  * either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  * =========================================================================================
+ *
  * Taken from: https://github.com/typesafehub/sbt-echo/blob/master/play/src/main/scala-sbt-0.13/com/typesafe/sbt/echo/EchoPlaySpecific.scala#L23
  */
 
@@ -19,8 +20,9 @@ package kamon.aspectj.sbt.task
 
 import kamon.aspectj.sbt.AspectjRunner
 import kamon.aspectj.sbt.runner.PlayRunner
-import play.Play._
-import play.PlayImport.PlayKeys._
+import play.sbt.run.PlayRun._
+import play.sbt.PlayImport.PlayKeys._
+import play.sbt.PlayInternalKeys.{playReloaderClasspath, playReloaderClassLoader, playAssetsClassLoader}
 import sbt.Keys._
 import sbt._
 

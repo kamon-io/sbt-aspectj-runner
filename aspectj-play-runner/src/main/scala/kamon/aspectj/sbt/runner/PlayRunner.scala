@@ -19,7 +19,7 @@ package runner
 
 import kamon.aspectj.sbt.task.PlayRunTask
 import org.aspectj.weaver.loadtime.WeavingURLClassLoader
-import play.Play._
+import play.runsupport.Reloader.ClassLoaderCreator
 import sbt._
 
 object PlayRunner {
@@ -32,7 +32,7 @@ object PlayRunner {
 
   def createRunHook: Def.Initialize[Task[RunHook]] = Def.task { new RunHook() }
 
-  class RunHook extends play.PlayRunHook {
+  class RunHook extends play.sbt.PlayRunHook {
     override def beforeStarted(): Unit = {
       println(s"""\u001B[32m Running Play application with Aspectj Weaver. \u001B[0m""")
       System.setProperty("org.aspectj.tracing.factory", "default")

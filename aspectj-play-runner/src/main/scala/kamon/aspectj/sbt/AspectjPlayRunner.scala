@@ -23,7 +23,7 @@ object AspectjPlayRunner extends AutoPlugin {
   import runner.PlayRunner._
 
   override def trigger = AllRequirements
-  override def requires = play.Play && AspectjRunner
+  override def requires = play.sbt.Play && AspectjRunner
 
   override lazy val projectSettings: Seq[Setting[_]] =  inConfig(Runner)(playRunSettings())
 }

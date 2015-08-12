@@ -23,7 +23,7 @@ object Dependencies {
     "Typesafe Maven Releases" at "http://repo.typesafe.com/typesafe/releases/"
   )
 
-  val playVersion = "2.3.10"
+  val playVersion = "2.4.2"
 
   val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.6"
   val playSbtPlugin = pluginExtra("com.typesafe.play" % "sbt-plugin" % playVersion)
