@@ -22,7 +22,7 @@ import kamon.aspectj.sbt.AspectjRunner
 import kamon.aspectj.sbt.runner.PlayRunner
 import play.sbt.run.PlayRun._
 import play.sbt.PlayImport.PlayKeys._
-import play.sbt.PlayInternalKeys.{playReloaderClasspath, playReloaderClassLoader, playAssetsClassLoader}
+import play.sbt.PlayInternalKeys.{ playReloaderClasspath, playReloaderClassLoader, playAssetsClassLoader }
 import sbt.Keys._
 import sbt._
 
