@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ========================================================== */
+
 package controllers
 
 import filters.{TraceLocalContainer, TraceLocalKey}
-import kamon.Kamon
 import kamon.play.action.TraceName
+import kamon.play.di.Kamon
 import kamon.trace.TraceLocal
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{Action, Controller}
-import play.libs.Akka
+import javax.inject._
 
 import scala.concurrent._
 
@@ -46,10 +47,10 @@ import scala.concurrent._
  **/
 
 
-object KamonPlayExample extends Controller {
+class KamonPlayExample @Inject() (kamon: Kamon) extends Controller {
 
   val logger = Logger(this.getClass)
-  val counter = Kamon.metrics.counter("my-counter")
+  val counter = kamon.metrics.counter("my-counter")
 
   def sayHello = Action.async {
     Future {
@@ -76,7 +77,7 @@ object KamonPlayExample extends Controller {
     }
   }
 
-  def updateTraceLocal = Action.async {
+  def updateTraceLocal() = Action.async {
     Future {
       TraceLocal.store(TraceLocalKey)(TraceLocalContainer("MyTraceToken","MyImportantHeader"))
       logger.info("storeInTraceLocal")

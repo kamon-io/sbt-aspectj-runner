@@ -7,6 +7,6 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 resolvers +=  "Kamon Repository Snapshots"  at "http://snapshots.kamon.io"
 
 // Use the Play sbt plugin for Play projects
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.10")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.2")
 
-addSbtPlugin("io.kamon" % "aspectj-play-runner" % "0.0.15-SNAPSHOT")
+addSbtPlugin("io.kamon" % "aspectj-play-runner" % "0.0.16-SNAPSHOT")

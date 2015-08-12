@@ -25,9 +25,7 @@ import scala.concurrent.Future
 
 case class TraceLocalContainer(traceToken:String, importantHeader:String)
 
-object TraceLocalKey extends TraceLocal.TraceLocalKey {
-  type ValueType = TraceLocalContainer
-}
+object TraceLocalKey extends TraceLocalKey[TraceLocalContainer]
 
 /*
  By default kamon spreads the trace-token-header-name, but sometimes is necessary pass through the application requests with some information like
@@ -48,8 +46,8 @@ object TraceLocalFilter extends Filter {
   override def apply(next: (RequestHeader) ⇒ Future[Result])(header: RequestHeader): Future[Result] = {
 
     def onResult(result:Result) = {
-        val traceLocalContainer = TraceLocal.retrieve(TraceLocalKey).getOrElse(TraceLocalContainer("unknown","unknown"))
-        result.withHeaders((TraceLocalStorageKey -> traceLocalContainer.traceToken))
+      val traceLocalContainer = TraceLocal.retrieve(TraceLocalKey).getOrElse(TraceLocalContainer("unknown","unknown"))
+      result.withHeaders(TraceLocalStorageKey -> traceLocalContainer.traceToken)
     }
 
     //update the TraceLocalStorage

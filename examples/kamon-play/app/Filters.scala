@@ -14,21 +14,11 @@
  * limitations under the License.
  * ========================================================== */
 
-import filters.TraceLocalFilter
-import play.api.mvc.WithFilters
-import play.api.Application
-import play.api.Play.{ current ⇒ currentMode, isDev }
-import kamon.Kamon
 
-object Global extends WithFilters(TraceLocalFilter) {
-  override def onStart(app: Application) {
-    try Kamon.start() catch {
-      case e:Exception => println("Kamon was reloaded.")
-    }
-  }
-  override def onStop(app: Application) = {
-    if (!isDev(currentMode)) {
-      Kamon.shutdown()
-    }
-  }
+import javax.inject.Inject
+import play.api.http.HttpFilters
+import  filters.TraceLocalFilter
+
+class Filters extends HttpFilters {
+  val filters = Seq(TraceLocalFilter)
 }
