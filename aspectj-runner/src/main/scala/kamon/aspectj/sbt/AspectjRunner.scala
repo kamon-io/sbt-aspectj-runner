@@ -24,6 +24,7 @@ object AspectjRunner extends AutoPlugin {
   import runner.Runner._
 
   val Runner = config("aspectj-runner").extend(Compile)
+  val RunnerTest = config("aspectj-runner-test").extend(Runner,Test)
 
   object AspectjRunnerKeys {
     val aspectjRunnerOptions = TaskKey[Seq[String]]("aspectj-runner-options")
@@ -41,26 +42,30 @@ object AspectjRunner extends AutoPlugin {
   override lazy val projectSettings: Seq[Setting[_]] = compileSettings
 
   def compileSettings: Seq[Setting[_]] =
-    inConfig(Runner)(defaultSettings) ++
-    inConfig(Runner)(runSettings) ++
+    inConfig(Runner)(defaultSettings(Runtime)) ++
+    inConfig(Runner)(runSettings(Runtime)) ++
       otherSettings
 
-  def defaultSettings: Seq[Setting[_]] = Seq(
+  def testSettings: Seq[Setting[_]] =
+    inConfig(RunnerTest)(defaultSettings(Test)) ++
+      inConfig(RunnerTest)(runSettings(Test))
+
+  def defaultSettings(currentScope: Configuration): Seq[Setting[_]] = Seq(
     aspectjVersion := AspectjVersion,
     aspectjWeaver <<= findAspectjWeaver,
     aspectjRunnerOptions <<= aspectjWeaver map runnerJavaOptions,
     aspectjOptionalArtifact <<= libraryDependencies map findAspectjArtifact,
-    unmanagedClasspath <<= unmanagedClasspath in Runtime,
-    managedClasspath <<= managedClasspath in Runtime,
-    internalDependencyClasspath <<= internalDependencyClasspath in Runtime,
+    unmanagedClasspath <<= unmanagedClasspath in currentScope,
+    managedClasspath <<= managedClasspath in currentScope,
+    internalDependencyClasspath <<= internalDependencyClasspath in currentScope,
     externalDependencyClasspath <<= Classpaths.concat(unmanagedClasspath, managedClasspath),
     dependencyClasspath <<= Classpaths.concat(internalDependencyClasspath, externalDependencyClasspath),
-    exportedProducts <<= exportedProducts in Runtime,
+    exportedProducts <<= exportedProducts in currentScope,
     fullClasspath <<= Classpaths.concatDistinct(exportedProducts, dependencyClasspath)
   )
 
-  def runSettings: Seq[Setting[_]] = Seq(
-    mainClass in run <<= mainClass in run in Compile,
+  def runSettings(currentScope: Configuration): Seq[Setting[_]] = Seq(
+    mainClass in run <<= mainClass in run in currentScope,
     inTask(run)(Seq(r <<= aspectjWeaverRunner)).head,
     run <<= Defaults.runTask(fullClasspath, mainClass in run, r in run),
     runMain <<= Defaults.runMainTask(fullClasspath, r in run)
