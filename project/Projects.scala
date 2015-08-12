@@ -29,10 +29,11 @@ object Projects extends Build {
 
   lazy val aspectjRunner = Project("aspectj-runner",file("aspectj-runner"))
     .settings(basicSettings: _*)
+    .settings(noPublishing: _*)
     .settings(formatSettings: _*)
     .settings(libraryDependencies ++= Seq(aspectjTools))
 
-  lazy val aspectjPlayRunner = Project("aspectj-play-runner",file("aspectj-play-runner"))
+  lazy val aspectjPlayRunner = Project("aspectj-play-23-runner",file("aspectj-play-runner"))
     .dependsOn(aspectjRunner)
     .settings(basicSettings: _*)
     .settings(formatSettings: _*)
