@@ -102,7 +102,7 @@ There are full [runnable examples][examples].
 
 ## Branches to look
 
-[The 'master' branch](https://github.com/kamon-io/sbt-aspectj-runner/tree/master) is where the development of the latest version lives on and the the main diference with the [The 'play-2.3.x' branch](https://github.com/kamon-io/sbt-aspectj-runner/tree/play-2.3.x) is the play version.
+The [master] branch is where the development of the latest version lives on and the the main diference with the [Play-2.3.x] branch is the play version.
 
 [sbt]: https://github.com/sbt/sbt
 [play]: https://www.playframework.com
@@ -113,3 +113,5 @@ There are full [runnable examples][examples].
 [examples]: https://github.com/kamon-io/sbt-aspectj-runner/tree/master/examples
 [here]:https://github.com/kamon-io/sbt-aspectj-runner/blob/master/aspectj-play-runner/src/main/scala/kamon/aspectj/sbt/task/PlayRunTask.scala#L38
 [Load-time Weaving Requirements]:https://eclipse.org/aspectj/doc/released/devguide/ltw-rules.html
+[master]:https://github.com/kamon-io/sbt-aspectj-runner/tree/master
+[play-2.3.x]:https://github.com/kamon-io/sbt-aspectj-runner/tree/play-2.3.x
