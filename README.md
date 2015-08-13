@@ -27,7 +27,7 @@ aspectj-runner:run
 ```
 We have two cases:
 * When the task forks: In this case, the forked process will run with the `-javaagent:<jarpath>` and that is all.
-* Wen the task Non forks: Here we will load the application with a custom classloader called [WeavingURLClassLoader] that allow instantiate a weaver and weave classes after loading and before defining them in the JVM. This enables load-time weaving to be supported in environments where no weaving agent is available.
+* When the task Non forks: Here we will load the application with a custom classloader called [WeavingURLClassLoader] that allow instantiate a weaver and weave classes after loading and before defining them in the JVM. This enables load-time weaving to be supported in environments where no weaving agent is available.
 
 ##Play Projects
 When we try run a Play applicacion with LTW we will find with some issues:
