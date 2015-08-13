@@ -2,7 +2,7 @@ language: scala
 script:
   - sbt ++$TRAVIS_SCALA_VERSION compile publish-local
 scala:
-   - 2.11.7
+   - 2.10.5
 jdk:
    - oraclejdk8
 sudo: false
