@@ -31,13 +31,29 @@ To run a specific main class:
 
 ```scala
 
-aspectj-runner:run-main
+aspectj-runner:run-main my.awesome.package.MainClass
 
 ```
 
-We have two cases:
+Additionally we can run the tests with LTW. For that we need include the test specific settings in our build:
+
+```scala
+
+kamon.aspectj.sbt.AspectjRunner.testSettings
+
+```
+and finally
+
+```scala
+
+aspectj-runner-test:run
+
+```
+
+We have two sceneries:
 * **fork in run := true**: In this case, the forked process will run with the `-javaagent:<jarpath>` and that is all.
 * **fork in run := false**: Here we will load the application with a custom classloader called [WeavingURLClassLoader] that allow instantiate a weaver and weave classes after loading and before defining them in the JVM. This enables load-time weaving to be supported in environments where no weaving agent is available.
+
 
 ##Play Projects
 When we try run a Play application with LTW we will find with some issues:
