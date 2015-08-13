@@ -54,6 +54,4 @@ object Settings {
       .setPreference(AlignParameters, false)
       .setPreference(AlignSingleLineCaseStatements, true)
       .setPreference(DoubleIndentClassDeclaration, true)
-
-  //def baseVersions: Seq[Setting[_]] = SbtGit.versionWithGit
 }
