@@ -1,4 +1,5 @@
-sbt-aspectj-runner   [![Build Status](https://travis-ci.org/kamon-io/sbt-aspectj-runner.png)](https://travis-ci.org/kamon-io/sbt-aspectj-runner)
+sbt-aspectj-runner   [![Build Status](https://travis-ci.org/kamon-io/sbt-aspectj-runner.png)](https://travis-ci.org/kamon-io/sbt-aspectj-runner) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kamon/aspectj-runner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.kamon/aspectj-runner)
+
 =========
 
 
