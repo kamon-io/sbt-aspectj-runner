@@ -39,5 +39,5 @@ object Projects extends Build {
     .settings(formatSettings: _*)
     .settings(libraryDependencies ++= Seq(aspectjTools, playSbtPlugin))
 
-  val noPublishing: Seq[Setting[_]] = Seq(publish := {}, publishLocal := {})
+  val noPublishing = Seq(publish := (), publishLocal := (), publishArtifact := false)
 }
