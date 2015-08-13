@@ -45,7 +45,7 @@ When we try run a Play application with LTW we will find with some issues:
 * Play has a `dynamic class-loading` mechanism that loads dependency classes differently then it
 does the classes in your source code in order to be able to reload changes in dev mode, this breaks some [Load-time Weaving Requirements].
 * Also by design Play doesn't and can not fork, hence setting `javaOptions` has no effect.
-* * In the case that we be able in some way fork Play run to attach the `-javaagent:<jarpath>`, we'll lose the dev mode reloading.
+* In the case that we be able in some way fork Play run to attach the `-javaagent:<jarpath>`, we'll lose the dev mode reloading.
 
 
 Having said that, **let’s get into the rabbit hole!**.
