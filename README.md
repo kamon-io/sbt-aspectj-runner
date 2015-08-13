@@ -1,7 +1,7 @@
 sbt-aspectj-runner   [![Build Status](https://travis-ci.org/kamon-io/sbt-aspectj-runner.png)](https://travis-ci.org/kamon-io/sbt-aspectj-runner)
 =========
 
-This project contains two [sbt] plugins to perform [Load-time weaving] (LTW) with Aspectj in a fast and easy way in our sbt projects and also we will be able to do a [run in development mode] in [play] based projects and everything will be fine. In order to run those plugins will we require sbt **0.13.x**.
+This project contains two [sbt] plugins to perform [Load-time weaving] \(LTW\) with Aspectj in a fast and easy way in our sbt projects and also we will be able to do a [run in development mode] in [play] based projects and everything will be fine. In order to run those plugins will we require sbt **0.13.x**.
 
 
 ##Sbt Projects
