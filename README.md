@@ -1,6 +1,6 @@
-sbt-aspectj-runner   
+sbt-aspectj-runner
 =========
-[![Build Status](https://travis-ci.org/kamon-io/sbt-aspectj-runner.png)](https://travis-ci.org/kamon-io/sbt-aspectj-runner) 
+[![Build Status](https://travis-ci.org/kamon-io/sbt-aspectj-runner.png)](https://travis-ci.org/kamon-io/sbt-aspectj-runner)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kamon/aspectj-runner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.kamon/aspectj-runner)
 
 
@@ -98,6 +98,16 @@ addSbtPlugin("io.kamon" % "aspectj-play-23-runner" % "0.1.2")
 aspectj-play-runner:run
 
 ```
+###Overriding configuration file
+
+System properties can be used to force a different config source:
+
+* **config.resource**: ```aspectj-runner:run -Dconfig.resource=whatever.conf```
+* **config.file**: ```aspectj-runner:run -Dconfig.file=conf/environments/dev/other.conf```
+* **config.url**:```aspectj-runner:run -Dconfig.url=http://site.com/my/awesome/configuration.conf```
+
+These system properties specify a replacement for `application.conf`, not an addition.
+
 ###Enjoy!
 
 ##Examples

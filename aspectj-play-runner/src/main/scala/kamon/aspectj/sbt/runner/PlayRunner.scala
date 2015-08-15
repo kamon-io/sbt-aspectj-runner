@@ -21,6 +21,7 @@ import kamon.aspectj.sbt.task.PlayRunTask
 import org.aspectj.weaver.loadtime.WeavingURLClassLoader
 import play.runsupport.Reloader.ClassLoaderCreator
 import sbt._
+import sbt.Keys._
 
 object PlayRunner {
   import AspectjRunner.AspectjRunnerKeys._
@@ -30,14 +31,28 @@ object PlayRunner {
 
   def createWeavingClassLoader: ClassLoaderCreator = (name, urls, parent) ⇒ new WeavingURLClassLoader(urls, parent)
 
-  def createRunHook: Def.Initialize[Task[RunHook]] = Def.task { new RunHook() }
+  def createRunHook: Def.Initialize[Task[RunHook]] = Def.task { new RunHook(streams.value.log) }
 
-  class RunHook extends play.sbt.PlayRunHook {
+  class RunHook(log: Logger) extends play.sbt.PlayRunHook {
     override def beforeStarted(): Unit = {
-      println(s"""\u001B[32m Running Play application with Aspectj Weaver. \u001B[0m""")
+      log.info(s"""\u001B[32m Running Play application with Aspectj Weaver. \u001B[0m""")
       System.setProperty("org.aspectj.tracing.factory", "default")
-      sys.props.getOrElseUpdate("config.resource", "application.conf")
+      sys.props.getOrElseUpdate(resolveConfig, "application.conf")
     }
+
     override def afterStopped(): Unit = {}
+
+    def resolveConfig: String = {
+      val configurations = Set("config.resource", "config.file", "config.url")
+      val currentConfigurations = configurations.filter(sys.props.contains)
+
+      if (currentConfigurations.isEmpty) return configurations.head
+
+      if (currentConfigurations.size > 1) {
+        log.warn(s"You set more than one of config.file => ${currentConfigurations.mkString(",")}; We'll take the default!")
+        return configurations.head
+      }
+      currentConfigurations.head
+    }
   }
 }
