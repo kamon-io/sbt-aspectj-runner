@@ -9,4 +9,4 @@ resolvers +=  "Kamon Repository Snapshots"  at "http://snapshots.kamon.io"
 // Use the Play sbt plugin for Play projects
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.10")
 
-addSbtPlugin("io.kamon" % "aspectj-play-23-runner" % "0.1.2")
+addSbtPlugin("io.kamon" % "aspectj-play-23-runner" % "0.1.3")
