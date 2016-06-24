@@ -20,8 +20,11 @@ import kamon.trace.TraceLocal
 import kamon.trace.TraceLocal.{AvailableToMdc, TraceLocalKey}
 import play.api.Logger
 import play.api.mvc.{Result, RequestHeader, Filter}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.Future
+import akka.stream.Materializer
+import scala.concurrent.ExecutionContext
+import com.google.inject.Inject
+
 
 case class TraceLocalContainer(traceToken:String, importantHeader:String)
 
@@ -34,7 +37,7 @@ object TraceLocalKey extends TraceLocalKey[TraceLocalContainer]
 
  More detailed usage of TraceLocalStorage: https://github.com/kamon-io/Kamon/blob/b17539d231da923ea854c01d2c69eb02ef1e85b1/kamon-core/src/test/scala/kamon/trace/TraceLocalSpec.scala
  */
-object TraceLocalFilter extends Filter {
+class TraceLocalFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext) extends Filter {
   val logger = Logger(this.getClass)
   val TraceLocalStorageKey = "MyTraceLocalStorageKey"
 
