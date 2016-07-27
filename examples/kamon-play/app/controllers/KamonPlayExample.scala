@@ -35,7 +35,7 @@ import scala.concurrent._
  *
  * and finally testing:
  *
- * curl -i -H 'X-Trace-Token:kamon-test' -H 'MyTraceLocalStorageKey:extra-header' -X GET "http://localhost:9000/helloKamon"
+ * curl -i -H 'X-Trace-Token:kamon-test' -H 'MyTraceLocalStorageKey:extra-header' -H 'User-Agent:Super-User-Agent' -X GET "http://localhost:9000/helloKamon"
  *
  * we should get:
  * HTTP/1.1 200 OK
