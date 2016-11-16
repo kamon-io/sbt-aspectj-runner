@@ -15,6 +15,8 @@ libraryDependencies += "io.kamon" %% "kamon-akka" % "0.6.0"
 
 libraryDependencies += "io.kamon" %% "kamon-log-reporter" % "0.6.0"
 
-fork in run := false
+libraryDependencies += "org.aspectj" % "aspectjweaver" % "1.8.6" withSources()
+
+fork in run := true
 
 kamon.aspectj.sbt.AspectjRunner.testSettings

@@ -32,7 +32,9 @@ object Runner {
   def aspectjWeaverDependency(version: String) = Seq("org.aspectj" % "aspectjweaver" % version % WeaverScope.name)
 
   def findAspectjWeaver: Def.Initialize[Task[Option[File]]] = update map { report ⇒
-    report.matching(moduleFilter(organization = "org.aspectj", name = "aspectjweaver")) headOption
+    report.matching(moduleFilter(organization = "org.aspectj", name = "aspectjweaver")
+      // Make sure to only select binary jars.
+      && artifactFilter(`type` = "jar")) headOption
   }
 
   def findAspectjArtifact(dependencies: Seq[ModuleID]): Seq[ModuleID] = {
