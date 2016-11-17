@@ -25,7 +25,7 @@ object Runner {
 
   import AspectjRunner.AspectjRunnerKeys._
 
-  val AspectjVersion = "1.8.6"
+  val AspectjVersion = "1.8.9"
   val WeaverCompileConfiguration = config("weaver-compile-configuration").extend(Configurations.RuntimeInternal).hide
   val WeaverScope = config("weaver-scope").hide
 

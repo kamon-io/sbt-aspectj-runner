@@ -52,20 +52,20 @@ object AspectjRunner extends AutoPlugin {
 
   def defaultSettings(currentScope: Configuration): Seq[Setting[_]] = Seq(
     aspectjVersion := AspectjVersion,
-    aspectjWeaver <<= findAspectjWeaver,
-    aspectjRunnerOptions <<= aspectjWeaver map runnerJavaOptions,
-    aspectjOptionalArtifact <<= libraryDependencies map findAspectjArtifact,
-    unmanagedClasspath <<= unmanagedClasspath in currentScope,
-    managedClasspath <<= managedClasspath in currentScope,
-    internalDependencyClasspath <<= internalDependencyClasspath in currentScope,
-    externalDependencyClasspath <<= Classpaths.concat(unmanagedClasspath, managedClasspath),
-    dependencyClasspath <<= Classpaths.concat(internalDependencyClasspath, externalDependencyClasspath),
-    exportedProducts <<= exportedProducts in currentScope,
-    fullClasspath <<= Classpaths.concatDistinct(exportedProducts, dependencyClasspath)
+    aspectjWeaver := findAspectjWeaver.value,
+    aspectjRunnerOptions := (aspectjWeaver map runnerJavaOptions).value,
+    aspectjOptionalArtifact := (libraryDependencies map findAspectjArtifact).value,
+    unmanagedClasspath := (unmanagedClasspath in currentScope).value,
+    managedClasspath := (managedClasspath in currentScope).value,
+    internalDependencyClasspath  := (internalDependencyClasspath in currentScope).value,
+    externalDependencyClasspath := Classpaths.concat(unmanagedClasspath, managedClasspath).value,
+    dependencyClasspath := Classpaths.concat(internalDependencyClasspath, externalDependencyClasspath).value,
+    exportedProducts := (exportedProducts in currentScope).value,
+    fullClasspath := Classpaths.concatDistinct(exportedProducts, dependencyClasspath).value
   )
 
   def runSettings(currentScope: Configuration): Seq[Setting[_]] = Seq(
-    mainClass in run <<= mainClass in run in currentScope,
+    mainClass in run := (mainClass in run in currentScope).value,
     inTask(run)(Seq(r <<= aspectjWeaverRunner)).head,
     run <<= Defaults.runTask(fullClasspath, mainClass in run, r in run),
     runMain <<= Defaults.runMainTask(fullClasspath, r in run)
@@ -73,6 +73,6 @@ object AspectjRunner extends AutoPlugin {
 
   def otherSettings: Seq[Setting[_]] = Seq(
     ivyConfigurations ++= Seq(WeaverCompileConfiguration, WeaverScope),
-    libraryDependencies <++= (aspectjVersion in Runner)(aspectjWeaverDependency),
-    allDependencies <++= aspectjOptionalArtifact in Runner)
+    libraryDependencies ++=  (aspectjVersion in Runner)(aspectjWeaverDependency).value,
+    allDependencies ++= (aspectjOptionalArtifact in Runner).value)
 }
