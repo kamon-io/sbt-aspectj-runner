@@ -25,14 +25,16 @@ object Runner {
 
   import AspectjRunner.AspectjRunnerKeys._
 
-  val AspectjVersion = "1.8.6"
+  val AspectjVersion = "1.8.9"
   val WeaverCompileConfiguration = config("weaver-compile-configuration").extend(Configurations.RuntimeInternal).hide
   val WeaverScope = config("weaver-scope").hide
 
   def aspectjWeaverDependency(version: String) = Seq("org.aspectj" % "aspectjweaver" % version % WeaverScope.name)
 
   def findAspectjWeaver: Def.Initialize[Task[Option[File]]] = update map { report ⇒
-    report.matching(moduleFilter(organization = "org.aspectj", name = "aspectjweaver")) headOption
+    report.matching(moduleFilter(organization = "org.aspectj", name = "aspectjweaver")
+      // Make sure to only select binary jars.
+      && artifactFilter(`type` = "jar")) headOption
   }
 
   def findAspectjArtifact(dependencies: Seq[ModuleID]): Seq[ModuleID] = {
