@@ -17,7 +17,7 @@ Add the `aspectj-runner` plugin to `project/plugins.sbt`. It should look like th
 
 ```scala
 
-addSbtPlugin("io.kamon" % "aspectj-runner" % "0.1.3")
+addSbtPlugin("io.kamon" % "aspectj-runner" % "0.1.4")
 
 ```
 ###Run
@@ -79,7 +79,7 @@ In order to achieve LTW support in  Play's dev run, we will use the same approac
 Add the `aspectj-play-runner` plugin to `project/plugins.sbt`. It should look like this:
 
 ```scala
-addSbtPlugin("io.kamon" % "aspectj-play-runner" % "0.1.3")
+addSbtPlugin("io.kamon" % "aspectj-play-runner" % "0.1.4")
 
 ```
 
