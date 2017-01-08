@@ -25,7 +25,7 @@ object Dependencies {
 
   val playVersion = "2.4.2"
 
-  val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.6"
+  val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.10"
   val playSbtPlugin = pluginExtra("com.typesafe.play" % "sbt-plugin" % playVersion)
 
   def pluginExtra(module:ModuleID):ModuleID = Defaults.sbtPluginExtra(module, "0.13", "2.10")
