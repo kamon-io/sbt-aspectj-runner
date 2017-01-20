@@ -22,15 +22,16 @@ val playSbtPluginFor24 = pluginExtra("com.typesafe.play" % "sbt-plugin" % "2.4.2
 def pluginExtra(module:ModuleID):ModuleID = Defaults.sbtPluginExtra(module, "0.13", "2.10")
 
 
-lazy val sbtAspectjRunner = Project("sbt-aspectj-runner", file("."))
+lazy val sbtAspectjRunner = Project("root", file("."))
+  .settings(sbtPlugin := true)
   .settings(noPublishing: _*)
   .aggregate(aspectjRunner, aspectjPlay24Runner)
 
-lazy val aspectjRunner = Project("aspectj-runner", file("aspectj-runner"))
+lazy val aspectjRunner = Project("sbt-aspectj-runner", file("sbt-aspectj-runner"))
   .settings(sbtPlugin := true)
   .settings(libraryDependencies ++= Seq(aspectjTools))
 
-lazy val aspectjPlay24Runner = Project("aspectj-play-runner", file("aspectj-play-runner"))
+lazy val aspectjPlay24Runner = Project("sbt-aspectj-play-runner", file("sbt-aspectj-play-runner"))
   .dependsOn(aspectjRunner)
   .settings(sbtPlugin := true)
   .settings(libraryDependencies ++= Seq(aspectjTools, playSbtPluginFor24))
