@@ -17,27 +17,25 @@
 import sbt._
 import sbt.Keys._
 
-import Dependencies._
+val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.10"
+val playSbtPluginFor24 = pluginExtra("com.typesafe.play" % "sbt-plugin" % "2.4.2")
+def pluginExtra(module:ModuleID):ModuleID = Defaults.sbtPluginExtra(module, "0.13", "2.10")
 
-import Settings._
-
-val noPublishing = Seq(publish := (), publishLocal := (), publishArtifact := false)
 
 lazy val sbtAspectjRunner = Project("sbt-aspectj-runner", file("."))
-  .settings(basicSettings: _*)
-  .settings(formatSettings: _*)
   .settings(noPublishing: _*)
-  .aggregate(aspectjRunner, aspectjPlayRunner)
+  .aggregate(aspectjRunner, aspectjPlay24Runner)
 
 lazy val aspectjRunner = Project("aspectj-runner", file("aspectj-runner"))
-  .settings(basicSettings: _*)
-  .settings(formatSettings: _*)
+  .settings(sbtPlugin := true)
   .settings(libraryDependencies ++= Seq(aspectjTools))
 
-lazy val aspectjPlayRunner = Project("aspectj-play-runner", file("aspectj-play-runner"))
+lazy val aspectjPlay24Runner = Project("aspectj-play-runner", file("aspectj-play-runner"))
   .dependsOn(aspectjRunner)
-  .settings(basicSettings: _*)
-  .settings(formatSettings: _*)
-  .settings(libraryDependencies ++= Seq(aspectjTools, playSbtPlugin))
+  .settings(sbtPlugin := true)
+  .settings(libraryDependencies ++= Seq(aspectjTools, playSbtPluginFor24))
+
+
+
 
 
