@@ -1,128 +1,78 @@
 sbt-aspectj-runner
 =========
 [![Build Status](https://travis-ci.org/kamon-io/sbt-aspectj-runner.png)](https://travis-ci.org/kamon-io/sbt-aspectj-runner)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kamon/aspectj-runner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.kamon/aspectj-runner)
+[![Download](https://api.bintray.com/packages/kamon-io/sbt-plugins/sbt-aspectj-runner/images/download.svg)](https://bintray.com/kamon-io/sbt-plugins/sbt-aspectj-runner/_latestVersion)
 
 
+This project contains two [sbt] plugins that automatically configure your build to perform [Load-time weaving] \(LTW\)
+with Aspectj when running your applicaction. These plugins enable you to seamlessly run both regular applications and
+[play] projects [in development mode] and ensure that your aspects will always be woven as expected. Only **0.13.x**
+versions of sbt are currently supported.
 
 
-This project contains two [sbt] plugins to perform [Load-time weaving] \(LTW\) with Aspectj in a fast and easy way in our sbt projects. With these plugins we will be able to do a [run in development mode] in [play] based projects seamlessly. Only versions **0.13.x** and upper of sbt are currently supported.
+## Regular Projects (non-Play)
 
+### Configure
 
-##Sbt Projects
-
-###Configure
-
-Add the `aspectj-runner` plugin to `project/plugins.sbt`. It should look like this:
-
-```scala
-
-addSbtPlugin("io.kamon" % "aspectj-runner" % "0.1.4")
-
-```
-###Run
-
-To run your application with `LTW` support, the only thing we need is to call `run` or `run-main` tasks. These use the same underlying settings for the regular run task, but also add the configuration needed to instrument your application, depending whether the task should `fork` or not.
-
-To run the default or discovered main class use:
+Add the `aspectj-runner` plugin to `project/plugins.sbt`, as well as our sbt-plugins repository. It should look like
+this:
 
 ```scala
-
-aspectj-runner:run
-
+resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
+addSbtPlugin("io.kamon" % "aspectj-runner" % "1.0.0")
 ```
 
-To run a specific main class:
+### Run
 
-```scala
+Just `run`!
 
-aspectj-runner:run-main my.awesome.package.MainClass
-
-```
-
-Additionally, we can run tests with LTW. For that we need to include the test-specific settings in our build:
-
-```scala
-
-kamon.aspectj.sbt.AspectjRunner.testSettings
-
-```
-and finally
-
-```scala
-
-aspectj-runner-test:run
-
-```
-
-We have two scenerios:
+Here is what the plugin will do depending on your `fork` settings:
 * **fork in run := true**: In this case, the forked process will run with the `-javaagent:<jarpath>` and that's all.
-* **fork in run := false**: Here we will load the application with a custom classloader called [WeavingURLClassLoader] that instantiates a weaver and weaves classes after loading, and before defining them in the JVM. This enables load-time weaving support in environments where no weaving agent is available.
+* **fork in run := false**: Here we will load the application with a custom classloader called [WeavingURLClassLoader]
+  that instantiates a weaver and weaves classes after loading, and before defining them in the JVM.
 
 
-##Play Projects
+## Play Projects
 If try to run a Play application with LTW we will face some issues:
 
-* Play has a `dynamic class-loading` mechanism that loads dependency classes differently from classes in your source code in order to be able to reload changes in dev mode; This breaks some [Load-time Weaving Requirements].
+* Play has a `dynamic class-loading` mechanism that loads dependency classes differently from classes in your source
+  code in order to be able to reload changes in dev mode; This breaks some [Load-time Weaving Requirements].
 * Also, by design, Play can not fork, hence setting `javaOptions` has no effect.
-* If we manage to fork Play somehow and run with `-javaagent:<jarpath>` attached, we'll lose dev mode reloading.
-
 
 Having said that, **let’s get into the rabbit hole!**.
 
-In order to achieve LTW support in  Play's dev run, we will use the same approach used in `Activator Inspect` and `sbt-echo`, taking heavily inspiration from the latter.
+In order to achieve LTW support in  Play's dev run, we will use the same approach used in `Activator Inspect` and `sbt-
+echo`, taking heavily inspiration from the latter.
 
-**The basic idea is**: configure a custom classloader, in our case  it will be the [WeavingURLClassLoader] rather than a java agent. (and Play run will be set up to allow the class loader to be configured). The magic is [here].
+**The basic idea is**: configure a custom classloader, in our case  it will be the [WeavingURLClassLoader] rather than a
+java agent, and Play run will be set up to use this custom classloader. The magic is [here].
 
-###Configure
+### Configure
 
 Add the `aspectj-play-runner` plugin to `project/plugins.sbt`. It should look like this:
 
 ```scala
-addSbtPlugin("io.kamon" % "aspectj-play-runner" % "0.1.4")
+resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
+addSbtPlugin("io.kamon" % "aspectj-play-runner" % "1.0.0")
 
 ```
 
-the code above is for **Play 2.4.x**, in the case of **Play 2.3.x**, it should look like this:
+This plugin has been tested with **Play 2.4.8** and **Play 2.5.10**.
 
-```scala
+### Run
 
-addSbtPlugin("io.kamon" % "aspectj-play-23-runner" % "0.1.3")
+Just execute `run` on the SBT console, everything should already be in place for you.
 
-```
-
-###Run
-
-```scala
-
-aspectj-play-runner:run
-
-```
-###Overriding configuration file
-
-System properties can be used to force a different config source:
-
-* **config.resource**: ```aspectj-runner:run -Dconfig.resource=whatever.conf```
-* **config.file**: ```aspectj-runner:run -Dconfig.file=conf/environments/dev/other.conf```
-* **config.url**:```aspectj-runner:run -Dconfig.url=http://site.com/my/awesome/configuration.conf```
-
-These system properties specify a replacement for `application.conf`, not an addition.
-
-###Enjoy!
 
 ##Examples
 
 There are full [runnable examples][examples].
 
-## Branches to look
-
-The [master] branch is where the development of the latest version lives on and the the main difference with the [Play-2.3.x] branch is the play version.
-
 [sbt]: https://github.com/sbt/sbt
 [play]: https://www.playframework.com
 [aspectj]: http://www.eclipse.org/aspectj
 [WeavingURLClassLoader]: https://eclipse.org/aspectj/doc/next/weaver-api/org/aspectj/weaver/loadtime/WeavingURLClassLoader.html
-[run in development mode]: https://www.playframework.com/documentation/2.4.2/PlayConsole#Running-the-server-in-development-mode
+[in development mode]: https://www.playframework.com/documentation/2.4.2/PlayConsole#Running-the-server-in-development-mode
 [Load-time weaving]: https://eclipse.org/aspectj/doc/released/devguide/ltw.html#ltw-introduction
 [examples]: https://github.com/kamon-io/sbt-aspectj-runner/tree/master/examples
 [here]:https://github.com/kamon-io/sbt-aspectj-runner/blob/master/aspectj-play-runner/src/main/scala/kamon/aspectj/sbt/task/PlayRunTask.scala#L38
