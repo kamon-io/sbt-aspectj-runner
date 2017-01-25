@@ -65,7 +65,7 @@ object SbtAspectJRunner extends AutoPlugin {
   }
 
   def aspectjWeaverRunner: Def.Initialize[Task[ScalaRun]] = Def.task {
-    if (fork.value) {
+    if ((fork in run).value) {
       val forkOptions = ForkOptions(
         javaHome.value,
         outputStrategy.value,
