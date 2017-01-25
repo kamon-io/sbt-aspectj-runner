@@ -114,28 +114,21 @@ object SbtAspectJRunner extends AutoPlugin {
     }
 
     private def makeLoader(classpath: Seq[File], instance: ScalaInstance, nativeTemp: File): ClassLoader =
-      filterByClasspath(classpath, makeLoader(classpath, instance.loader, instance, nativeTemp))
-
-    private def makeLoader(classpath: Seq[File], parent: ClassLoader, instance: ScalaInstance, nativeTemp: File): ClassLoader =
-      toLoader(classpath, parent, createClasspathResources(classpath, instance.jars), nativeTemp)
+      toLoader(classpath, createClasspathResources(classpath, instance.jars), nativeTemp)
 
     private def javaLibraryPaths: Seq[File] = IO.parseClasspath(System.getProperty("java.library.path"))
 
-    private def toLoader(paths: Seq[File], parent: ClassLoader, resourceMap: Map[String, String], nativeTemp: File): ClassLoader =
-      new WeavingURLClassLoader(Path.toURLs(paths), parent) with RawResources with NativeCopyLoader {
+    private def toLoader(paths: Seq[File], resourceMap: Map[String, String], nativeTemp: File): ClassLoader =
+      new WeavingURLClassLoader(Path.toURLs(paths), null) with RawResources with NativeCopyLoader {
         override def resources = resourceMap
         override val config = new NativeCopyConfig(nativeTemp, paths, javaLibraryPaths)
         override def toString =
           s"""|WeavingURLClassLoader with NativeCopyLoader with RawResources(
               |  urls = $paths,
-              |  parent = $parent,
               |  resourceMap = ${resourceMap.keySet},
               |  nativeTemp = $nativeTemp
               |)""".stripMargin
       }
-
-    private def filterByClasspath(classpath: Seq[File], loader: ClassLoader): ClassLoader =
-      new ClasspathFilter(loader, ClasspathUtilities.xsbtiLoader, classpath.toSet)
 
     private def invokeMain(loader: ClassLoader, main: Method, options: Seq[String]): Unit = {
       val currentThread = Thread.currentThread
