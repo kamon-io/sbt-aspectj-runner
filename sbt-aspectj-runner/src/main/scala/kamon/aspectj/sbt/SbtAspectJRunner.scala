@@ -21,8 +21,6 @@ import java.lang.reflect.Modifier.{isPublic, isStatic}
 
 import sbt._
 import Keys._
-import org.aspectj.weaver.loadtime.WeavingURLClassLoader
-import sbt.classpath._
 
 object SbtAspectJRunner extends AutoPlugin {
 
@@ -64,41 +62,43 @@ object SbtAspectJRunner extends AutoPlugin {
     Seq(s"-javaagent:${aspectjWeaver.value.getAbsolutePath}")
   }
 
-  def aspectjWeaverRunner: Def.Initialize[Task[ScalaRun]] = Def.task {
+  def aspectjWeaverRunner: Def.Initialize[Task[ScalaRun]] = Def.taskDyn {
     if ((fork in run).value) {
-      val forkOptions = ForkOptions(
-        javaHome.value,
-        outputStrategy.value,
-        Seq.empty,
-        Some(baseDirectory.value),
-        javaOptions.value ++ aspectjRunnerJvmForkOptions.value,
-        connectInput.value
-      )
-      new ForkRun(forkOptions)
-
+      Def.task {
+        val forkOptions = ForkOptions(
+          javaHome = javaHome.value,
+          outputStrategy = outputStrategy.value,
+          bootJars = Seq.empty[java.io.File],
+          workingDirectory = Some(baseDirectory.value),
+          runJVMOptions = javaOptions.value ++ aspectjRunnerJvmForkOptions.value,
+          connectInput = connectInput.value,
+          envVars = Map.empty[String, String]
+        )
+        new ForkRun(forkOptions)
+      }
     } else {
-      new RunWithAspectJ(aspectjWeaver.value, scalaInstance.value, trapExit.value, taskTemporaryDirectory.value)
+      Def.task {
+        new RunWithAspectJ(aspectjWeaver.value, scalaInstance.value, trapExit.value, taskTemporaryDirectory.value)
+      }
     }
   }
-
 
   /**
     *   This class is a dirty copy of sbt.Run, with all required dependencies to make sure we are using the
     *   WeavingURLClassLoader instead of a plain URLClassLoader.
     *
     */
-  class RunWithAspectJ(aspectjWeaver: File, instance: ScalaInstance, trapExit: Boolean, nativeTmp: File) extends ScalaRun {
+  class RunWithAspectJ(aspectjWeaver: File, instance: SbtCross.ScalaInstance, trapExit: Boolean, nativeTmp: File) extends Run(instance, trapExit, nativeTmp) {
     /** Runs the class 'mainClass' using the given classpath and options using the scala runner.*/
-    def run(mainClass: String, classpath: Seq[File], options: Seq[String], log: Logger) = {
+    override def run(mainClass: String, classpath: Seq[File], options: Seq[String], log: Logger) = {
       log.info("Running " + mainClass + " " + options.mkString(" "))
       val classpathWithWeaver = aspectjWeaver +: classpath
 
       def execute() =
         try { run0(mainClass, classpathWithWeaver, options, log) }
         catch { case e: java.lang.reflect.InvocationTargetException => throw e.getCause }
-      def directExecute() = try { execute(); None } catch { case e: Exception => log.trace(e); Some(e.toString) }
 
-      if (trapExit) Run.executeTrapExit(execute(), log) else directExecute()
+      if (trapExit) Run.executeTrapExit(execute(), log) else SbtCross.directExecute(execute(), log)
     }
 
     private def run0(mainClassName: String, classpath: Seq[File], options: Seq[String], log: Logger): Unit = {
@@ -110,25 +110,12 @@ object SbtAspectJRunner extends AutoPlugin {
 
     private def createClasspathResources(appPaths: Seq[File], bootPaths: Seq[File]): Map[String, String] = {
       def make(name: String, paths: Seq[File]) = name -> Path.makeString(paths)
-      Map(make(ClasspathUtilities.AppClassPath, appPaths), make(ClasspathUtilities.BootClassPath, bootPaths))
+      Map(make(SbtCross.AppClassPath, appPaths), make(SbtCross.BootClassPath, bootPaths))
     }
 
-    private def makeLoader(classpath: Seq[File], instance: ScalaInstance, nativeTemp: File): ClassLoader =
-      toLoader(classpath, createClasspathResources(classpath, instance.jars), nativeTemp)
-
-    private def javaLibraryPaths: Seq[File] = IO.parseClasspath(System.getProperty("java.library.path"))
-
-    private def toLoader(paths: Seq[File], resourceMap: Map[String, String], nativeTemp: File): ClassLoader =
-      new WeavingURLClassLoader(Path.toURLs(paths), null) with RawResources with NativeCopyLoader {
-        override def resources = resourceMap
-        override val config = new NativeCopyConfig(nativeTemp, paths, javaLibraryPaths)
-        override def toString =
-          s"""|WeavingURLClassLoader with NativeCopyLoader with RawResources(
-              |  urls = $paths,
-              |  resourceMap = ${resourceMap.keySet},
-              |  nativeTemp = $nativeTemp
-              |)""".stripMargin
-      }
+    private def makeLoader(classpath: Seq[File], instance: SbtCross.ScalaInstance, nativeTemp: File): ClassLoader = {
+      SbtCross.toLoader(classpath, createClasspathResources(classpath, instance.allJars), nativeTemp)
+    }
 
     private def invokeMain(loader: ClassLoader, main: Method, options: Seq[String]): Unit = {
       val currentThread = Thread.currentThread
@@ -138,7 +125,7 @@ object SbtAspectJRunner extends AutoPlugin {
       finally { currentThread.setContextClassLoader(oldLoader) }
     }
 
-    private def getMainMethod(mainClassName: String, loader: ClassLoader) = {
+    override def getMainMethod(mainClassName: String, loader: ClassLoader) = {
       val mainClass = Class.forName(mainClassName, true, loader)
       val method = mainClass.getMethod("main", classOf[Array[String]])
       // jvm allows the actual main class to be non-public and to run a method in the non-public class,
@@ -150,4 +137,5 @@ object SbtAspectJRunner extends AutoPlugin {
       method
     }
   }
+
 }
