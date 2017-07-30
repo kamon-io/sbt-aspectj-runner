@@ -26,7 +26,7 @@ lazy val sbtAspectjRunner = Project("root", file("."))
   .settings(sbtPlugin := true)
   .settings(noPublishing: _*)
   .aggregate(aspectjRunner, aspectjPlay24Runner)
-  .settings(crossSbtVersions := Vector("0.13.15", "1.0.0-RC2"))
+  .settings(crossSbtVersions := Vector("0.13.16", "1.0.0-RC3"))
 
 lazy val aspectjRunner = Project("sbt-aspectj-runner", file("sbt-aspectj-runner"))
   .settings(sbtPlugin := true)
