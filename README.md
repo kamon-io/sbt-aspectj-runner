@@ -56,8 +56,15 @@ resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
 addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner" % "1.0.2")
 
 ```
+and for play `2.6.x`
 
-This plugin has been tested with **Play 2.4.8** and **Play 2.5.10**.
+```scala
+resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
+addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner-2.6" % "1.0.2")
+
+```
+
+This plugin has been tested with **Play 2.4.8**, **Play 2.5.10** and **Play 2.6.5**.
 
 ### Run
 
