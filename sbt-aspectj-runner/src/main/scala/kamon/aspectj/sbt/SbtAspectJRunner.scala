@@ -31,7 +31,7 @@ object SbtAspectJRunner extends AutoPlugin {
 
   object Keys {
     val aspectjVersion = SettingKey[String]("aspectj-version")
-    val aspectjWeaver = TaskKey[File]("aspectj-weaver")
+    val aspectjWeaver = TaskKey[File]("aspectj-weaver-jar")
     val aspectjRunnerJvmForkOptions = TaskKey[Seq[String]]("aspectj-runner-options")
   }
 
