@@ -19,7 +19,7 @@ this:
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.0.2")
+addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.0.3")
 ```
 
 ### Run
@@ -53,14 +53,14 @@ Add the `aspectj-play-runner` plugin to `project/plugins.sbt`. It should look li
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner" % "1.0.2")
+addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner" % "1.0.3")
 
 ```
 and for play `2.6.x`
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner-2.6" % "1.0.2")
+addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner-2.6" % "1.0.3")
 
 ```
 
