@@ -60,7 +60,7 @@ and for play `2.6.x`
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner-2.6" % "1.0.3")
+addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner-26" % "1.0.3")
 
 ```
 
