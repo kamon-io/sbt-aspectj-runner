@@ -18,7 +18,7 @@ Add the `aspectj-runner` plugin to `project/plugins.sbt`, as well as our sbt-plu
 this:
 
 ```scala
-resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
+resolvers += Resolver.bintrayRepo("kamon-io", "sbt-plugins")
 addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.0.3")
 ```
 
