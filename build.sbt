@@ -17,7 +17,7 @@
 import sbt._
 import sbt.Keys._
 
-val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.10"
+val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.13"
 val playSbtPluginFor24 = pluginExtra("com.typesafe.play" % "sbt-plugin" % "2.4.2")
 def pluginExtra(module:ModuleID):ModuleID = Defaults.sbtPluginExtra(module, "0.13", "2.10")
 
@@ -26,7 +26,7 @@ lazy val sbtAspectjRunner = Project("root", file("."))
   .settings(sbtPlugin := true)
   .settings(noPublishing: _*)
   .aggregate(aspectjRunner, aspectjPlay24Runner)
-  .settings(crossSbtVersions := Vector("0.13.16", "1.0.0-RC3"))
+  .settings(crossSbtVersions := Vector("0.13.16", "1.0.4"))
 
 lazy val aspectjRunner = Project("sbt-aspectj-runner", file("sbt-aspectj-runner"))
   .settings(sbtPlugin := true)
@@ -36,3 +36,8 @@ lazy val aspectjPlay24Runner = Project("sbt-aspectj-play-runner", file("sbt-aspe
   .dependsOn(aspectjRunner)
   .settings(sbtPlugin := true)
   .settings(libraryDependencies ++= Seq(aspectjTools, playSbtPluginFor24))
+
+//workaround for https://github.com/sbt/sbt/issues/3749
+scalaVersion in ThisBuild := {
+  if((sbtBinaryVersion in pluginCrossBuild).value.startsWith("0.")) "2.10.7" else "2.12.4"
+}

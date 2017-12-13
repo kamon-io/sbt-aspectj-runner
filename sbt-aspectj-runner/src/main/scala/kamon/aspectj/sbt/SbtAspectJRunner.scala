@@ -68,9 +68,9 @@ object SbtAspectJRunner extends AutoPlugin {
         val forkOptions = ForkOptions(
           javaHome = javaHome.value,
           outputStrategy = outputStrategy.value,
-          bootJars = Seq.empty[java.io.File],
+          bootJars = Vector.empty[java.io.File],
           workingDirectory = Some(baseDirectory.value),
-          runJVMOptions = javaOptions.value ++ aspectjRunnerJvmForkOptions.value,
+          runJVMOptions = (javaOptions.value ++ aspectjRunnerJvmForkOptions.value).toVector,
           connectInput = connectInput.value,
           envVars = Map.empty[String, String]
         )
