@@ -37,9 +37,9 @@ object SbtAspectJPlayRunner extends AutoPlugin {
     javaOptions in Runtime += "-Dorg.aspectj.tracing.factory=default"
   )
 
-  def weavingClassLoaderCreator =  Def.task {
+  def weavingClassLoaderCreator = Def.task {
+    val weaverPath = Path.toURLs(Seq(aspectjWeaver.value))
     (name: String, urls: Array[URL], parent: ClassLoader) ⇒
-      val weaverPath = Path.toURLs(Seq(aspectjWeaver.value))
       new WeavingURLClassLoader(weaverPath ++ urls, parent)
   }
 
