@@ -6,8 +6,9 @@ sbt-aspectj-runner
 
 This project contains two [sbt] plugins that automatically configure your build to perform [Load-time weaving] \(LTW\)
 with Aspectj when running your applicaction. These plugins enable you to seamlessly run both regular applications and
-[play] projects [in development mode] and ensure that your aspects will always be woven as expected. Only **0.13.x**
-versions of sbt are currently supported.
+[play] projects [in development mode] and ensure that your aspects will always be woven as expected. 
+
+SBT versions from 0.13.x and above (including 1.x) are supported.
 
 
 ## Regular Projects (non-Play)
