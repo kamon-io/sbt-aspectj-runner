@@ -5,74 +5,75 @@ sbt-aspectj-runner
 
 
 This project contains two [sbt] plugins that automatically configure your build to perform [Load-time weaving] \(LTW\)
-with Aspectj when running your applicaction. These plugins enable you to seamlessly run both regular applications and
-[play] projects [in development mode] and ensure that your aspects will always be woven as expected. 
+with Aspectj when running your application from within SBT, both for regular applications and Play Framework projects
+[in development mode] and ensure that your aspects will always be woven as expected.
 
-SBT versions from 0.13.x and above (including 1.x) are supported.
+SBT versions 0.13 and 1.0 are supported.
+
+## Why this plugin?
+
+First and foremost, simplicity. Although adding the AspectJ Weaver agent is just about adding the `-javaagent` option
+to the JVM, doing so can be challenging when running from SBT. These plugins take care of the corner cases and ensure
+that hitting `run` will just work, regardless your project type or whether you are forking the JVM or not.
+
 
 
 ## Regular Projects (non-Play)
 
-### Configure
+### Configuring
 
-Add the `aspectj-runner` plugin to `project/plugins.sbt`, as well as our sbt-plugins repository. It should look like
-this:
+Add the `sbt-aspectj-runner` plugin to your `project/plugins.sbt` file using the code bellow:
 
 ```scala
 resolvers += Resolver.bintrayRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.0.4")
+addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.1.0")
 ```
 
-### Run
+### Running
 
-Just `run`!
+Just `run`, like you do all the time!
 
 Here is what the plugin will do depending on your `fork` settings:
-* **fork in run := true**: In this case, the forked process will run with the `-javaagent:<jarpath>` and that's all.
-* **fork in run := false**: Here we will load the application with a custom classloader called [WeavingURLClassLoader]
-  that instantiates a weaver and weaves classes after loading, and before defining them in the JVM.
+* **fork in run := true**: The forked process will run with the `-javaagent:<jarpath>` and that's all.
+* **fork in run := false**: A custom classloader called [WeavingURLClassLoader] will be used. This classloader will
+  perform the same load-time weaving duties done by the AspectJ Weaver agent.
 
 
 ## Play Projects
-If try to run a Play application with LTW we will face some issues:
 
-* Play has a `dynamic class-loading` mechanism that loads dependency classes differently from classes in your source
-  code in order to be able to reload changes in dev mode; This breaks some [Load-time Weaving Requirements].
-* Also, by design, Play can not fork, hence setting `javaOptions` has no effect.
+### Configuring
 
-Having said that, **let’s get into the rabbit hole!**.
+For Play Framework 2.6 projects add the `sbt-aspectj-runner-play-2.6` to your `project/plugins.sbt` file:
 
-In order to achieve LTW support in  Play's dev run, we will use the same approach used in `Activator Inspect` and `sbt-
-echo`, taking heavily inspiration from the latter.
+```scala
+resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
+addSbtPlugin("io.kamon" % "sbt-aspectj-runner-play-2.6" % "1.1.0")
 
-**The basic idea is**: configure a custom classloader, in our case  it will be the [WeavingURLClassLoader] rather than a
-java agent, and Play run will be set up to use this custom classloader. The magic is [here].
+```
 
-### Configure
-
-Add the `aspectj-play-runner` plugin to `project/plugins.sbt`. It should look like this:
+For Play 2.4 and 2.5 you can use the older `sbt-aspectj-play-runner` plugin:
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
 addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner" % "1.0.4")
 
 ```
-and for play `2.6.x`
 
-```scala
-resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner-26" % "1.0.4")
+This plugin has been tested with **Play 2.4.8**, **Play 2.5.10** and **Play 2.6.11**.
 
-```
+### Running
 
-This plugin has been tested with **Play 2.4.8**, **Play 2.5.10** and **Play 2.6.5**.
+Just `run`, like you do all the time! A notice will be shown saying that you are running your application with the
+AspectJ Weaver.
 
-### Run
-
-Just execute `run` on the SBT console, everything should already be in place for you.
+The Play Framework SBT plugin will not allow the JVM to be forked so this plugin will override the way class loaders are
+created to use [WeavingURLClassLoader] instead, making sure that aspects will be woven when running on Development mode.
 
 
-##Examples
+
+
+
+## Examples
 
 There are full [runnable examples][examples].
 
