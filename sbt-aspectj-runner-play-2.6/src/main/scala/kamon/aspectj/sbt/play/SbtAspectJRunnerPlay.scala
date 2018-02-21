@@ -16,32 +16,27 @@
 
 package kamon.aspectj.sbt.play
 
+import java.net.URL
+
 import _root_.play.sbt.PlayImport.PlayKeys._
-import _root_.play.sbt.PlayInternalKeys._
 import _root_.play.sbt.{Colors, Play, PlayRunHook}
 import kamon.aspectj.sbt.SbtAspectJRunner
 import org.aspectj.weaver.loadtime.WeavingURLClassLoader
+
 import sbt.Keys._
 import sbt._
 
-object SbtAspectJPlayRunner extends AutoPlugin {
-  import SbtAspectJRunner.Keys.aspectjWeaver
+object SbtAspectJRunnerPlay extends AutoPlugin {
 
   override def trigger = AllRequirements
   override def requires = Play && SbtAspectJRunner
 
   override def projectSettings: Seq[Setting[_]] = Seq(
+    Keys.run in Compile := AspectJPlayRun.playWithAspectJRunTask.evaluated,
     playRunHooks += runningWithAspectJNoticeHook.value,
-    playDependencyClassLoader := weavingClassLoaderCreator.value,
-    playReloaderClassLoader := weavingClassLoaderCreator.value,
-    javaOptions in Runtime += "-Dorg.aspectj.tracing.factory=default"
+    javaOptions in Runtime += "-Dorg.aspectj.tracing.factory=default",
+    libraryDependencies += "org.aspectj" % "aspectjtools" % "1.8.13"
   )
-
-  def weavingClassLoaderCreator = Def.task {
-    val weaverPath = Path.toURLs(Seq(aspectjWeaver.value))
-    (name: String, urls: Array[URL], parent: ClassLoader) ⇒
-      new WeavingURLClassLoader(weaverPath ++ urls, parent)
-  }
 
   def runningWithAspectJNoticeHook: Def.Initialize[Task[RunningWithAspectJNotice]] = Def.task {
     new RunningWithAspectJNotice(streams.value.log)
@@ -51,5 +46,9 @@ object SbtAspectJPlayRunner extends AutoPlugin {
     override def beforeStarted(): Unit = {
       log.info(Colors.green("Running the application with Aspectj Weaver"))
     }
+  }
+
+  class NamedWeavingURLClassLoader(name: String, urls: Array[URL], parent: ClassLoader) extends WeavingURLClassLoader(urls, parent) {
+    override def toString = name + "{" + getURLs.map(_.toString).mkString(", ") + "}"
   }
 }
