@@ -3,7 +3,7 @@
 package kamon.aspectj.sbt.play
 
 import java.io.{Closeable, File}
-import java.net.URL
+import java.net.{URL, URLClassLoader}
 import java.security.{AccessController, PrivilegedAction}
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicReference
@@ -16,7 +16,7 @@ import play.dev.filewatch.FileWatchService
 import play.runsupport.{NamedURLClassLoader, ServerStartException}
 import play.runsupport.classloader.{ApplicationClassLoaderProvider, DelegatingClassLoader}
 import play.runsupport.{AssetsClassLoader, RunHook}
-import play.runsupport.Reloader.{CompileResult, CompileSuccess, CompileFailure, Source, GeneratedSourceMapping}
+import play.runsupport.Reloader.{CompileFailure, CompileResult, CompileSuccess, GeneratedSourceMapping, Source}
 
 import scala.collection.JavaConverters._
 
@@ -202,7 +202,7 @@ object AspectJReloader {
       * to the applicationLoader, creating a full circle for resource loading.
       */
     lazy val delegatingLoader: ClassLoader = new DelegatingClassLoader(commonClassLoader, Build.sharedClasses, buildLoader, new ApplicationClassLoaderProvider {
-      def get: ClassLoader = { reloader.getClassLoader.orNull }
+      def get: URLClassLoader = { reloader.getClassLoader.orNull }
     })
 
     lazy val applicationLoader = new NamedWeavingURLClassLoader("DependencyClassLoader", urls(dependencyClasspath), delegatingLoader)
@@ -275,7 +275,7 @@ object AspectJReloader {
     lazy val delegatingLoader: ClassLoader = new DelegatingClassLoader(
       parentClassLoader,
       Build.sharedClasses, buildLoader, new ApplicationClassLoaderProvider {
-        def get: ClassLoader = { applicationLoader }
+        def get: URLClassLoader = { applicationLoader }
       })
 
     lazy val applicationLoader = new NamedURLClassLoader("DependencyClassLoader", urls(dependencyClasspath),
@@ -317,8 +317,6 @@ object AspectJReloader {
 
 }
 
-import kamon.aspectj.sbt.play.AspectJReloader._
-
 class AspectJReloader(
   reloadCompile: () => CompileResult,
   baseLoader: ClassLoader,
@@ -330,7 +328,7 @@ class AspectJReloader(
   reloadLock: AnyRef) extends BuildLink {
 
   // The current classloader for the application
-  @volatile private var currentApplicationClassLoader: Option[ClassLoader] = None
+  @volatile private var currentApplicationClassLoader: Option[URLClassLoader] = None
   // Flag to force a reload on the next request.
   // This is set if a compile error occurs, and also by the forceReload method on BuildLink, which is called for
   // example when evolutions have been applied.
