@@ -26,7 +26,7 @@ Add the `sbt-aspectj-runner` plugin to your `project/plugins.sbt` file using the
 
 ```scala
 resolvers += Resolver.bintrayRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.1.0")
+addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.1.1")
 ```
 
 ### Running
@@ -47,7 +47,7 @@ For Play Framework 2.6 projects add the `sbt-aspectj-runner-play-2.6` to your `p
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-runner-play-2.6" % "1.1.0")
+addSbtPlugin("io.kamon" % "sbt-aspectj-runner-play-2.6" % "1.1.1")
 
 ```
 
