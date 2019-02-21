@@ -23,10 +23,11 @@ def crossSbtDependency(module: ModuleID, sbtVersion: String, scalaVersion: Strin
 
 val aspectjTools = "org.aspectj" % "aspectjtools" % "1.8.13"
 val playSbtPluginFor26 = "com.typesafe.play" % "sbt-plugin" % "2.6.11"
+val playSbtPluginFor27 = "com.typesafe.play" % "sbt-plugin" % "2.7.0"
 
 
 lazy val sbtAspectjRunner = Project("root", file("."))
-  .aggregate(aspectjRunner, aspectjRunnerPlay26)
+  .aggregate(aspectjRunner, aspectjRunnerPlay26, aspectjRunnerPlay27)
   .settings(noPublishing: _*)
   .settings(
     crossSbtVersions := Seq("0.13.17", "1.0.4")
@@ -49,6 +50,18 @@ lazy val aspectjRunnerPlay26 = Project("sbt-aspectj-runner-play-26", file("sbt-a
     libraryDependencies ++= Seq(
       aspectjTools,
       crossSbtDependency(playSbtPluginFor26, (sbtBinaryVersion in pluginCrossBuild).value, scalaBinaryVersion.value)
+    )
+  )
+
+lazy val aspectjRunnerPlay27 = Project("sbt-aspectj-runner-play-27", file("sbt-aspectj-runner-play-2.7"))
+  .dependsOn(aspectjRunner)
+  .settings(
+    sbtPlugin := true,
+    crossSbtVersions := Seq("0.13.17", "1.0.4"),
+    moduleName := "sbt-aspectj-runner-play-2.7",
+    libraryDependencies ++= Seq(
+      aspectjTools,
+      crossSbtDependency(playSbtPluginFor27, (sbtBinaryVersion in pluginCrossBuild).value, scalaBinaryVersion.value)
     )
   )
 

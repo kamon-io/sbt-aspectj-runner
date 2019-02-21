@@ -123,9 +123,6 @@ object AspectJReloader {
 
     /** Reloads the application.*/
     def reload(): Unit
-
-    /** URL at which the application is running (if started) */
-    def url(): String
   }
 
   /**
@@ -226,7 +223,7 @@ object AspectJReloader {
       }
 
       // Notify hooks
-      runHooks.run(_.afterStarted(server.mainAddress))
+      runHooks.run(_.afterStarted())
 
       new DevServer {
         val buildLink = reloader
@@ -244,7 +241,6 @@ object AspectJReloader {
             case (key, _) => System.clearProperty(key)
           }
         }
-        def url(): String = server.mainAddress().getHostName + ":" + server.mainAddress().getPort
       }
     } catch {
       case e: Throwable =>
@@ -307,9 +303,6 @@ object AspectJReloader {
 
       /** Reloads the application.*/
       def reload(): Unit = ()
-
-      /** URL at which the application is running (if started) */
-      def url(): String = server.mainAddress().getHostName + ":" + server.mainAddress().getPort
 
       def close(): Unit = server.stop()
     }

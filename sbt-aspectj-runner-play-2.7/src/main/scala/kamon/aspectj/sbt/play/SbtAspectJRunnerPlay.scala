@@ -19,17 +19,16 @@ package kamon.aspectj.sbt.play
 import java.net.URL
 
 import _root_.play.sbt.PlayImport.PlayKeys._
-import _root_.play.sbt.{Colors, Play, PlayRunHook}
+import _root_.play.sbt.{Colors, PlayRunHook, PlayWeb}
 import kamon.aspectj.sbt.SbtAspectJRunner
 import org.aspectj.weaver.loadtime.WeavingURLClassLoader
-
 import sbt.Keys._
 import sbt._
 
 object SbtAspectJRunnerPlay extends AutoPlugin {
 
   override def trigger = AllRequirements
-  override def requires = Play && SbtAspectJRunner
+  override def requires = PlayWeb && SbtAspectJRunner
 
   override def projectSettings: Seq[Setting[_]] = Seq(
     Keys.run in Compile := AspectJPlayRun.playWithAspectJRunTask.evaluated,
