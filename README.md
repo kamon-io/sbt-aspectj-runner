@@ -63,7 +63,7 @@ For Play 2.4 and 2.5 you can use the older `sbt-aspectj-play-runner` plugin:
 
 ```scala
 resolvers += Resolver.bintrayIvyRepo("kamon-io", "sbt-plugins")
-addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner" % "1.2.2")
+addSbtPlugin("io.kamon" % "sbt-aspectj-play-runner" % "1.0.4")
 
 ```
 
