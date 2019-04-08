@@ -78,8 +78,41 @@ The Play Framework SBT plugin will not allow the JVM to be forked so this plugin
 created to use [WeavingURLClassLoader] instead, making sure that aspects will be woven when running on Development mode.
 
 
+### Docker
 
+To enable the AspectJ Waver agent when packing your application using `sbt-native-packager` you can simply
+change your `build.sbt` as follow:
 
+```scala
+import SbtAspectJRunner.Keys._
+
+...
+
+lazy val service = (project in file("service"))
+  .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(AshScriptPlugin)
+  .settings(
+      ...
+    dockerBaseImage := "openjdk:jre-alpine",
+    mappings in Universal += aspectjWeaver.value -> "aspectj/aspectj.jar",
+    bashScriptExtraDefines ++= Seq("addJava -javaagent:${app_home}/../aspectj/aspectj.jar"),
+      ...
+  )
+```
+
+1 - `SbtAspectJRunner` adds the AspectJ weaver dependency to your project and  `aspectjWeaver.value`
+resolves to the `aspectjweaver` jar file (e.g: ~/.ivy2/cache/org.aspectj/aspectjweaver/jars/aspectjweaver-1.8.10.jar).
+
+2 - `mappings in Universal ...` copies the `aspectjweaver` jar file to the docker stage directory under:
+
+> service/target/docker/stage/opt/docker/aspectj
+
+3 - `bashScriptExtraDefines ++= Seq("addJava ... ` finally adds the `javaagent` to the docker entry point
+script `service/target/docker/stage/opt/docker/bin/service`. If you open the script you should
+find a line like:
+
+> addJava -javaagent:${app_home}/../aspectj/aspectj.jar
 
 ## Examples
 
