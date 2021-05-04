@@ -20,7 +20,7 @@ object SbtCross {
   def toLoader(paths: Seq[File], resourceMap: Map[String, String], nativeTemp: File): ClassLoader =
     new WeavingURLClassLoader(Path.toURLs(paths), null) with RawResources with NativeCopyLoader {
       override def resources = resourceMap
-      override val config = new NativeCopyConfig(nativeTemp, paths, javaLibraryPaths)
+      override val config = new NativeCopyConfig(nativeTemp.toPath, paths.map(_.toPath), javaLibraryPaths.map(_.toPath))
       override def toString =
         s"""|WeavingURLClassLoader with NativeCopyLoader with RawResources(
             |  urls = $paths,

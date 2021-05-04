@@ -17,6 +17,12 @@
 import sbt._
 import sbt.Keys._
 
+val publishSettings = Seq(
+  publishTo := Some("Artifactory Realm" at "https://iadvize.jfrog.io/iadvize/iadvize-sbt"),
+  publishConfiguration := publishConfiguration.value.withOverwrite(true),
+  publishMavenStyle := true
+)
+
 def crossSbtDependency(module: ModuleID, sbtVersion: String, scalaVersion: String): ModuleID = {
   Defaults.sbtPluginExtra(module, sbtVersion, scalaVersion)
 }
@@ -29,43 +35,34 @@ val playSbtPluginFor27 = "com.typesafe.play" % "sbt-plugin" % "2.7.0"
 lazy val sbtAspectjRunner = Project("root", file("."))
   .aggregate(aspectjRunner, aspectjRunnerPlay26, aspectjRunnerPlay27)
   .settings(noPublishing: _*)
-  .settings(
-    crossSbtVersions := Seq("0.13.17", "1.0.4")
-  )
 
 lazy val aspectjRunner = Project("sbt-aspectj-runner", file("sbt-aspectj-runner"))
   .settings(
     sbtPlugin := true,
-    crossSbtVersions := Seq("0.13.17", "1.0.4"),
-    libraryDependencies ++= Seq(aspectjTools)
-  )
+    libraryDependencies ++= Seq(aspectjTools),
+  ).settings(publishSettings: _*)
 
 
 lazy val aspectjRunnerPlay26 = Project("sbt-aspectj-runner-play-26", file("sbt-aspectj-runner-play-2.6"))
   .dependsOn(aspectjRunner)
   .settings(
     sbtPlugin := true,
-    crossSbtVersions := Seq("0.13.17", "1.0.4"),
     moduleName := "sbt-aspectj-runner-play-2.6",
     libraryDependencies ++= Seq(
       aspectjTools,
       crossSbtDependency(playSbtPluginFor26, (sbtBinaryVersion in pluginCrossBuild).value, scalaBinaryVersion.value)
     )
-  )
+  ).settings(publishSettings: _*)
 
 lazy val aspectjRunnerPlay27 = Project("sbt-aspectj-runner-play-27", file("sbt-aspectj-runner-play-2.7"))
   .dependsOn(aspectjRunner)
   .settings(
     sbtPlugin := true,
-    crossSbtVersions := Seq("0.13.17", "1.0.4"),
     moduleName := "sbt-aspectj-runner-play-2.7",
     libraryDependencies ++= Seq(
       aspectjTools,
       crossSbtDependency(playSbtPluginFor27, (sbtBinaryVersion in pluginCrossBuild).value, scalaBinaryVersion.value)
     )
-  )
+  ).settings(publishSettings: _*)
 
-//workaround for https://github.com/sbt/sbt/issues/3749
-scalaVersion in ThisBuild := {
-  if((sbtBinaryVersion in pluginCrossBuild).value.startsWith("0.")) "2.10.7" else "2.12.4"
-}
+scalaVersion in ThisBuild := "2.12.13"
